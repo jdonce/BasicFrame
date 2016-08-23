@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/_f2f2f2">
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layoutBottom" />
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/dp_1"
+        android:layout_above="@+id/layoutBottom"
+        android:background="@color/_40000000" />
+
+    <LinearLayout
+        android:id="@+id/layoutBottom"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/dp_54"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:background="@color/_cb000000"
+        android:baselineAligned="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingTop="1px">
+        <!--tab1-->
+        <RelativeLayout
+            android:id="@+id/layout_tab1"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingTop="@dimen/dp_6">
+
+            <ImageView
+                android:id="@+id/ivTab1"
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@null"
+                android:src="@drawable/tab_1" />
+
+            <TextView
+                android:id="@+id/tvTab1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ivTab1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/dp_3"
+                android:text="@string/tab_1"
+                android:textSize="@dimen/sp_12" />
+
+        </RelativeLayout>
+
+        <!-- tab2-->
+        <RelativeLayout
+            android:id="@+id/layout_tab2"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingTop="@dimen/dp_6">
+
+            <ImageView
+                android:id="@+id/ivTab2"
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@null"
+                android:src="@drawable/tab_2" />
+
+            <TextView
+                android:id="@+id/tvTab2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ivTab2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/dp_3"
+                android:text="@string/tab_2"
+                android:textSize="@dimen/sp_12" />
+
+        </RelativeLayout>
+
+        <!--tab3-->
+        <RelativeLayout
+            android:id="@+id/layout_tab3"
+            android:layout_width="0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingTop="@dimen/dp_6">
+
+            <ImageView
+                android:id="@+id/ivTab3"
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:layout_centerHorizontal="true"
+                android:contentDescription="@null"
+                android:src="@drawable/tab_3" />
+
+            <TextView
+                android:id="@+id/tvTab3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ivTab3"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/dp_3"
+                android:text="@string/tab_3"
+                android:textSize="@dimen/sp_12" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

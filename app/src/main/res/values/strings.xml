@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">BasicFrame</string>
+
+    <string name="tab_1">TAB1</string>
+    <string name="tab_2">TAB2</string>
+    <string name="tab_3">TAB3</string>
+
+    <string name="download_fail">下载失败，请重试！</string>
+</resources>
