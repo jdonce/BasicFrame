@@ -1,5 +1,7 @@
 package com.donce.common.presenter;
 
+import android.text.TextUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -9,9 +11,13 @@ import okhttp3.ResponseBody;
 import retrofit2.Response;
 
 /**
+ * 文件下载的Presenter基类
  * Created by Administrator on 2016/8/11 0011.
  */
-public class FileDownBasePresenter extends BasePresenter<UpdateDownloadView> {
+public class FileDownBasePresenter {
+
+    private UpdateDownloadView updateDownloadView;
+
     /**
      * 目标文件存储的文件夹路径
      */
@@ -22,7 +28,7 @@ public class FileDownBasePresenter extends BasePresenter<UpdateDownloadView> {
     private String destFileName;
 
     public FileDownBasePresenter(UpdateDownloadView view, String destFileDir, String destFileName) {
-        super(view);
+        this.updateDownloadView = view;
         this.destFileDir = destFileDir;
         this.destFileName = destFileName;
     }
@@ -32,21 +38,21 @@ public class FileDownBasePresenter extends BasePresenter<UpdateDownloadView> {
     public void handleResponse(Response<ResponseBody> response) {
         ResponseBody body = response.body();
         if (body == null) {
-            getView().onFail("文件异常");
+            onLoadFailure("文件异常");
             return;
         }
         try {
             File file = saveFile(response.body());
-            getView().onSuccess(file);
+            updateDownloadView.onSuccess(file);
         } catch (IOException e) {
             e.printStackTrace();
             String message;
-            if (e == null) {
+            if (e == null || TextUtils.isEmpty(e.getMessage())) {
                 message = "";
             } else {
-                message = e.getMessage().toString();
+                message = e.getMessage();
             }
-            getView().onFail(message);
+            onLoadFailure(message);
         }
     }
 
@@ -71,7 +77,7 @@ public class FileDownBasePresenter extends BasePresenter<UpdateDownloadView> {
                 sum += len;
                 fos.write(buf, 0, len);
                 final long finalSum = sum;
-                getView().inProgress(finalSum * 1.0f / total,total);
+                updateDownloadView.inProgress(finalSum * 1.0f / total, total);
             }
             fos.flush();
 
@@ -90,4 +96,7 @@ public class FileDownBasePresenter extends BasePresenter<UpdateDownloadView> {
         }
     }
 
+    public void onLoadFailure(String msg) {
+        updateDownloadView.onFail(msg);
+    }
 }

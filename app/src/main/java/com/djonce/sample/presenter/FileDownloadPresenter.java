@@ -1,18 +1,11 @@
 package com.djonce.sample.presenter;
 
-import android.app.DownloadManager;
-import android.content.Context;
-import android.net.Uri;
 
-import com.djonce.sample.MainApplication;
+import android.text.TextUtils;
+
 import com.djonce.sample.model.api.Factory;
 import com.donce.common.presenter.FileDownBasePresenter;
 import com.donce.common.presenter.UpdateDownloadView;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -44,16 +37,17 @@ public class FileDownloadPresenter extends FileDownBasePresenter {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 String message;
-                if (t == null) {
+                if (t == null|| TextUtils.isEmpty(t.getMessage())) {
                     message = "";
                 } else {
-                    message = t.getMessage().toString();
+                    message = t.getMessage();
                 }
-                getView().onFail(message);
+                onLoadFailure(message);
 
             }
         });
     }
+
 
     //取消下载
     public void onCancelDownload() {

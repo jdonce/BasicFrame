@@ -15,7 +15,7 @@ import retrofit2.Response;
  * 登录的数据请求
  * Created by Administrator on 2016/7/22 0022.
  */
-public class LoginPresent extends LoadPresenter {
+public class LoginPresent extends BasePresenter {
 
     public LoginPresent(LoadView view) {
         super(view);
@@ -37,8 +37,8 @@ public class LoginPresent extends LoadPresenter {
                     onLoadFailure("连接失败");
                     return;
                 }
-                Log.d("main", t.getMessage().toString());
-                onLoadFailure(t.getMessage().toString());
+                Log.d("main", t.getMessage());
+                onLoadFailure(t.getMessage());
             }
         });
 
