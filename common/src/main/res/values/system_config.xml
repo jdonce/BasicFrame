@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--是否debug模式-->
+    <bool name="debug">true</bool>
+    <!--数据库版本号-->
+    <integer name="db_version">1</integer>
+</resources>

@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.donce.common.model.OrmManager;
+
 import butterknife.ButterKnife;
 
 
@@ -32,5 +34,6 @@ public class BaseApplication extends Application {
         Log.i(TAG, "---------- BaseApplication Create -------");
 
         ButterKnife.setDebug(BuildConfig.LOG_DEBUG);
+        OrmManager.getInstance();
     }
 }
