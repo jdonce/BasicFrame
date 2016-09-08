@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="_f2f2f2">#f2f2f2</color>
+    <color name="_f8f8f8">#f8f8f8</color>
     <color name="_40000000">#40000000</color>
     <color name="_88000000">#88000000</color>
     <color name="_cb000000">#cb000000</color>
@@ -8,5 +9,16 @@
     <color name="_7CC6A0">#7CC6A0</color>
     <color name="_333333">#333333</color>
     <color name="_cccccc">#cccccc</color>
+    <color name="_000000">#000000</color>
+    <color name="_d7d7db">#d7d7db</color>
+    <color name="_8f8f8f">#8f8f8f</color>
+
+    <!--线条颜色-->
+    <color name="bgColor_divider">@color/_d7d7db</color>
+    <!--高亮按钮颜色-->
+    <color name="textColor_alert_button_destructive">#ff3b30</color>
+    <!--点击颜色-->
+    <color name="bgColor_alert_button_press">@color/_cccccc</color>
+
 
 </resources>

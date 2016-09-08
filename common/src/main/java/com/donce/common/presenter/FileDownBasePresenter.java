@@ -1,5 +1,7 @@
 package com.donce.common.presenter;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 
 import java.io.File;
@@ -77,7 +79,13 @@ public class FileDownBasePresenter {
                 sum += len;
                 fos.write(buf, 0, len);
                 final long finalSum = sum;
-                updateDownloadView.inProgress(finalSum * 1.0f / total, total);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateDownloadView.inProgress(finalSum * 1.0f / total, total);
+                    }
+                });
+
             }
             fos.flush();
 
