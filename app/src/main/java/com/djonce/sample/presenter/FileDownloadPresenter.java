@@ -37,7 +37,7 @@ public class FileDownloadPresenter extends FileDownBasePresenter {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 String message;
-                if (t == null|| TextUtils.isEmpty(t.getMessage())) {
+                if (t == null || TextUtils.isEmpty(t.getMessage())) {
                     message = "";
                 } else {
                     message = t.getMessage();
