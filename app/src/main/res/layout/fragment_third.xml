@@ -9,8 +9,42 @@
     <Button
         android:id="@+id/btn1"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_45"
-        android:text="下载" />
+        android:layout_height="@dimen/dp_48"
+        android:layout_margin="@dimen/dp_8"
+        android:background="@drawable/white_corners_bg"
+        android:text="测试alert弹框1" />
+
+    <Button
+        android:id="@+id/btn2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_48"
+        android:layout_margin="@dimen/dp_8"
+        android:background="@drawable/white_corners_bg"
+        android:text="测试alert弹框2" />
+
+    <Button
+        android:id="@+id/btn3"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_48"
+        android:layout_margin="@dimen/dp_8"
+        android:background="@drawable/white_corners_bg"
+        android:text="测试alert弹框3" />
+
+    <Button
+        android:id="@+id/btn1_bottom1"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_48"
+        android:layout_margin="@dimen/dp_8"
+        android:background="@drawable/white_corners_bg"
+        android:text="测试底部选择框1" />
+
+    <Button
+        android:id="@+id/btn1_bottom2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_48"
+        android:layout_margin="@dimen/dp_8"
+        android:background="@drawable/white_corners_bg"
+        android:text="测试底部选择框2" />
 
     <!--<Button
         android:id="@+id/btn2"

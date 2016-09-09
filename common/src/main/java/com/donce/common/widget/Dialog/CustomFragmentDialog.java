@@ -36,6 +36,7 @@ public class CustomFragmentDialog extends DialogFragment {
 
     private ArrayList<String> datas = new ArrayList<>();
     private Builder builder;
+    private boolean isHasHeaderView;
 
     public CustomFragmentDialog() {
     }
@@ -63,14 +64,16 @@ public class CustomFragmentDialog extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-
+        if (builder == null) {
+            return;
+        }
         //设置窗口的宽高和显示位置
         int marginWidth = 0;
         final WindowManager.LayoutParams layoutParams = getDialog().getWindow().getAttributes();
         Builder.Style style = builder.style;
         switch (style) {
             case BottomActionSheet:
-//                marginWidth = getResources().getDimensionPixelSize(R.dimen.dp_20);
+                marginWidth = getResources().getDimensionPixelSize(R.dimen.dp_20);
                 layoutParams.gravity = Gravity.BOTTOM;
                 break;
             case Alert:
@@ -92,12 +95,18 @@ public class CustomFragmentDialog extends DialogFragment {
             if (buttons != null && buttons.length > 0) {
                 datas.addAll(Arrays.asList(buttons));
             }
+            if (!TextUtils.isEmpty(builder.title) || !TextUtils.isEmpty(builder.message)) {
+                isHasHeaderView = true;
+            }
         }
     }
 
     //初始化页面
     private void initViews(LayoutInflater inflater, ViewGroup container) {
         Context context = getContext();
+        if (builder == null) {
+            return;
+        }
         Builder.Style style = builder.style;
         switch (style) {
             case BottomActionSheet:
@@ -133,8 +142,60 @@ public class CustomFragmentDialog extends DialogFragment {
         //初始化头部
         initCommonHeaderView(view);
         //初始化选择的列表
+        initSelectListView(context, view);
+        //初始化底部的取消按钮
+        TextView tvCancel = (TextView) view.findViewById(R.id.tv_alert_cancel);
+        setTextViewText(builder.bottomCancelButton, tvCancel);
+        tvCancel.setOnClickListener(new OnTextClickListener(CANCEL_POSITION, builder == null ?
+                null : builder.onItemButtonClickListener));
+    }
+
+
+    //初始化提示框的view
+    private void initAlertViews(Context context, View view) {
+        llAlertButtons = (LinearLayout) view.findViewById(R.id.ll_alert_buttons);
+        initCommonHeaderView(view);
+        int position = 0;
+        //初始化按钮选项
+        if (builder == null || builder.buttonsOrientation == Builder.HORIZONTAL) {
+            for (int i = 0; i < datas.size(); i++) {
+                if (i != 0) {
+                    View divider = new View(context);
+                    divider.setBackgroundColor(getResources().getColor(R.color.bgColor_divider));
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) getResources()
+                            .getDimension(R.dimen.dp_1), LinearLayout.LayoutParams.MATCH_PARENT);
+                    llAlertButtons.addView(divider, params);
+                }
+                View itemView = LayoutInflater.from(context).inflate(R.layout.item_alert_button, null);
+                TextView tvAlert = (TextView) itemView.findViewById(R.id.tv_alert);
+                tvAlert.setClickable(true);
+                //设置点击效果
+                if (datas.size() == 1) {
+                    tvAlert.setBackgroundResource(R.drawable.alert_bottom_corners_selector);
+                } else if (i == 0) {//设置最左边的按钮效果
+                    tvAlert.setBackgroundResource(R.drawable.alert_bottom_left_corners_selector);
+                } else if (i == datas.size() - 1) {//设置最右边的按钮效果
+                    tvAlert.setBackgroundResource(R.drawable.alert_bottom_right_corners_selector);
+                } else {//中间按钮
+                    tvAlert.setBackgroundResource(R.drawable.alert_none_corners_selector);
+                }
+                String data = datas.get(i);
+                tvAlert.setText(data);
+                tvAlert.setOnClickListener(new OnTextClickListener(position, builder == null ?
+                        null : builder.onItemButtonClickListener));
+                llAlertButtons.addView(itemView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+                position++;
+            }
+        } else {
+            initSelectListView(context, view);
+        }
+    }
+
+    //初始话列表的view
+    private void initSelectListView(Context context, View view) {
         ListView alertButtonListView = (ListView) view.findViewById(R.id.alert_button_listView);
-        FragmentDialogAdapter fragmentDialogAdapter = new FragmentDialogAdapter(context);
+        FragmentDialogAdapter fragmentDialogAdapter = new FragmentDialogAdapter(context, isHasHeaderView);
         fragmentDialogAdapter.setmDatas(datas);
         alertButtonListView.setAdapter(fragmentDialogAdapter);
         alertButtonListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -146,49 +207,7 @@ public class CustomFragmentDialog extends DialogFragment {
                 dismiss();
             }
         });
-        //初始化底部的取消按钮
-        TextView tvCancel = (TextView) view.findViewById(R.id.tv_alert_cancel);
-        setTextViewText(builder.bottomCancelButton, tvCancel);
-        tvCancel.setOnClickListener(new OnTextClickListener(CANCEL_POSITION, builder == null ?
-                null : builder.onItemButtonClickListener));
     }
-
-    //初始化提示框的view
-    private void initAlertViews(Context context, View view) {
-        llAlertButtons = (LinearLayout) view.findViewById(R.id.ll_alert_buttons);
-        initCommonHeaderView(view);
-        int position = 0;
-        for (int i = 0; i < datas.size(); i++) {
-            if (i != 0) {
-                View divider = new View(context);
-                divider.setBackgroundColor(getResources().getColor(R.color.bgColor_divider));
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int) getResources()
-                        .getDimension(R.dimen.dp_1), LinearLayout.LayoutParams.MATCH_PARENT);
-                llAlertButtons.addView(divider, params);
-            }
-            View itemView = LayoutInflater.from(context).inflate(R.layout.item_alert_button, null);
-            TextView tvAlert = (TextView) itemView.findViewById(R.id.tv_alert);
-            tvAlert.setClickable(true);
-            //设置点击效果
-            if (datas.size() == 1) {
-                tvAlert.setBackgroundResource(R.drawable.alert_bottom_corners_selector);
-            } else if (i == 0) {//设置最左边的按钮效果
-                tvAlert.setBackgroundResource(R.drawable.alert_bottom_left_corners_selector);
-            } else if (i == datas.size() - 1) {//设置最右边的按钮效果
-                tvAlert.setBackgroundResource(R.drawable.alert_bottom_right_corners_selector);
-            } else {//中间按钮
-                tvAlert.setBackgroundResource(R.drawable.alert_none_corners_selector);
-            }
-            String data = datas.get(i);
-            tvAlert.setText(data);
-            tvAlert.setOnClickListener(new OnTextClickListener(position, builder == null ?
-                    null : builder.onItemButtonClickListener));
-            llAlertButtons.addView(itemView, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT, 1));
-            position++;
-        }
-    }
-
 
     //设置标题
     public void setTitle(String title) {
@@ -216,30 +235,59 @@ public class CustomFragmentDialog extends DialogFragment {
 
 
     public static class Builder {
+        public static final int HORIZONTAL = 0;
+        public static final int VERTICAL = 1;
+
         public enum Style {
             BottomActionSheet,//底部选择器的形式
             Alert//提示框形式
         }
 
-        private Style style = Style.Alert;
-        private String title;
-        private String message;
-        private String[] buttons;
-        private String bottomCancelButton;
+        private Style style = Style.Alert;//对话框显示的样式
+        private String title;//标题
+        private String message;//内容
+        private String[] buttons;//按钮选项
+        private int buttonsOrientation;//按钮显示方向
+        private String bottomCancelButton;//取消按钮
         private OnItemButtonClickListener onItemButtonClickListener;
+
+
+        /**
+         * 提示框  按钮显示方向 默认是横向的
+         *
+         * @param title   标题  为空时，会隐藏标题控件
+         * @param message 内容  为空时，会隐藏内容控件
+         * @param buttons 按钮选项
+         */
+        public Builder(String title, String message, String[] buttons) {
+            this(title, message, buttons, HORIZONTAL);
+        }
 
         /**
          * 提示框
          *
-         * @param title   标题  为空时，会隐藏标题控件
-         * @param message 内容  为空时，会隐藏内容控件
-         * @param buttons 按钮
+         * @param title              标题  为空时，会隐藏标题控件
+         * @param message            内容  为空时，会隐藏内容控件
+         * @param buttons            按钮
+         * @param buttonsOrientation 按钮显示方向
          */
-        public Builder(String title, String message, String[] buttons) {
+        public Builder(String title, String message, String[] buttons, int buttonsOrientation) {
             this.title = title;
             this.message = message;
             this.buttons = buttons;
+            this.buttonsOrientation = buttonsOrientation;
             this.style = Style.Alert;
+        }
+
+
+        /**
+         * 底部选择框 无标题和内容
+         *
+         * @param buttons            可选择的选项按钮
+         * @param bottomCancelButton 底部取消按钮  为空时，会隐藏控件
+         */
+        public Builder(String[] buttons, String bottomCancelButton) {
+            this("", "", buttons, bottomCancelButton);
         }
 
         /**
@@ -248,7 +296,7 @@ public class CustomFragmentDialog extends DialogFragment {
          * @param title              标题  为空时，会隐藏标题控件
          * @param message            内容  为空时，会隐藏内容控件
          * @param buttons            可选择的选项按钮
-         * @param bottomCancelButton 底部取消按钮
+         * @param bottomCancelButton 底部取消按钮  为空时，会隐藏控件
          */
         public Builder(String title, String message, String[] buttons, String bottomCancelButton) {
             this.title = title;

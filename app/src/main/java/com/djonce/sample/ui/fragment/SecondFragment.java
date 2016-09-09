@@ -1,6 +1,8 @@
 package com.djonce.sample.ui.fragment;
 
+import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,10 +11,13 @@ import android.widget.TextView;
 import com.djonce.sample.R;
 import com.djonce.sample.model.bean.User;
 import com.djonce.sample.model.db.DBUser;
+import com.djonce.sample.presenter.FileDownloadPresenter;
+import com.donce.common.presenter.UpdateDownloadView;
 import com.donce.common.ui.BaseFragment;
 import com.donce.common.util.ToastUtil;
 import com.donce.common.widget.Dialog.CustomFragmentDialog;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
@@ -21,7 +26,7 @@ import butterknife.OnClick;
 /**
  * Created by Administrator on 2016/8/2 0002.
  */
-public class SecondFragment extends BaseFragment implements CustomFragmentDialog.OnItemButtonClickListener {
+public class SecondFragment extends BaseFragment implements UpdateDownloadView {
     @BindView(R.id.tv_title)
     TextView tvTitle;
     @BindView(R.id.btn1)
@@ -33,8 +38,8 @@ public class SecondFragment extends BaseFragment implements CustomFragmentDialog
     @BindView(R.id.tv_result)
     TextView tvResult;
 
-    private CustomFragmentDialog alertDialog;
-    private CustomFragmentDialog bottomDialog;
+    private FileDownloadPresenter fileDownloadPresenter;
+    private boolean isDownload;
 
     @Override
     protected int getLayoutResource() {
@@ -48,23 +53,22 @@ public class SecondFragment extends BaseFragment implements CustomFragmentDialog
     }
 
 
-    @OnClick({R.id.btn1, R.id.btn1_bottom, R.id.btn2})
+    @OnClick({R.id.btn1, R.id.btn2})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn1: {
-                CustomFragmentDialog.Builder builder = new CustomFragmentDialog.Builder("提示", "内容",
-                        new String[]{"取消", "确定"});
-                builder.setOnItemButtonClickListener(this);
-                alertDialog = builder.create();
-                alertDialog.show(getFragmentManager(), "alert");
-            }
-            break;
-            case R.id.btn1_bottom:
-                CustomFragmentDialog.Builder builder = new CustomFragmentDialog.Builder("提示", "内容",
-                        new String[]{"选项1", "选项2", "选项3"}, "cancel");
-                builder.setOnItemButtonClickListener(this);
-                bottomDialog = builder.create();
-                bottomDialog.show(getFragmentManager(), "alert");
+            case R.id.btn1:
+                if (isDownload) {
+                    isDownload = false;
+                    fileDownloadPresenter.onCancelDownload();
+                } else {
+                    isDownload = true;
+                    btn1.setText("取消");
+                    String tag = "basic";
+                    String destFileDir = Environment.getExternalStorageDirectory().getPath() + "/" + tag + "/";
+                    String destFileName = System.currentTimeMillis() + "test123.exe";
+                    fileDownloadPresenter = new FileDownloadPresenter(this, destFileDir, destFileName);
+                    fileDownloadPresenter.download("url");
+                }
                 break;
             case R.id.btn2:
                 String name = editName.getText().toString();
@@ -77,7 +81,6 @@ public class SecondFragment extends BaseFragment implements CustomFragmentDialog
                 insertUser(name, age);
                 break;
         }
-
 
     }
 
@@ -102,13 +105,23 @@ public class SecondFragment extends BaseFragment implements CustomFragmentDialog
 
 
     @Override
-    public void onItemClick(Object object, int position) {
-        String objectStr;
-        if (object.equals(alertDialog)) {
-            objectStr = "alert";
-        } else {
-            objectStr = "bottom";
-        }
-        ToastUtil.showShortToast(getContext(), objectStr + "窗口" + "点击按钮" + position + "");
+    public void inProgress(float progress, long total) {
+        int progressCount = (int) (100 * progress);
+        Log.d("inProgress", progressCount + "%");
     }
+
+    @Override
+    public void onSuccess(File file) {
+        isDownload = false;
+        btn1.setText("文件下载");
+        ToastUtil.showLongToast(getActivity(), "成功");
+
+    }
+
+    @Override
+    public void onFail(String message) {
+        isDownload = false;
+        ToastUtil.showLongToast(getActivity(), "失败");
+    }
+
 }

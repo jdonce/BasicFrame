@@ -13,6 +13,10 @@
     <color name="_d7d7db">#d7d7db</color>
     <color name="_8f8f8f">#8f8f8f</color>
 
+    <!--对话框的背景色-->
+    <color name="bgColor_alert_view">@color/_ffffff</color>
+    <!--对话框字体颜色-->
+    <color name="textColor_alert_view">@color/_333333</color>
     <!--线条颜色-->
     <color name="bgColor_divider">@color/_d7d7db</color>
     <!--高亮按钮颜色-->

@@ -2,34 +2,17 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
-    >
+    android:clickable="true">
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_gravity="center"
         android:background="@drawable/alert_corners_bg"
-        >
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_alert_title"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_60"
-            android:gravity="center"
-            android:textColor="@color/_000000"
-            android:textSize="@dimen/sp_20" />
-
-        <TextView
-            android:id="@+id/tv_alert_msg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dp_25"
-            android:gravity="center"
-            android:textColor="@color/_000000"
-            android:textSize="@dimen/sp_16" />
+        <include layout="@layout/common_alert_header_view" />
 
         <LinearLayout
             android:id="@+id/ll_alert_buttons"
@@ -37,6 +20,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" />
 
+        <include layout="@layout/common_alert_button_listview" />
     </LinearLayout>
 
 </FrameLayout>

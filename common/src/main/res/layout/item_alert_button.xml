@@ -15,6 +15,6 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_48"
         android:gravity="center"
-        android:textColor="@color/_333333"
+        android:textColor="@color/textColor_alert_view"
         android:textSize="@dimen/sp_18" />
 </LinearLayout>
