@@ -1,6 +1,5 @@
 package com.djonce.sample.ui.fragment;
 
-import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -12,10 +11,9 @@ import com.djonce.sample.R;
 import com.djonce.sample.model.bean.User;
 import com.djonce.sample.model.db.DBUser;
 import com.djonce.sample.presenter.FileDownloadPresenter;
-import com.donce.common.presenter.UpdateDownloadView;
+import com.donce.common.presenter.DownloadView;
 import com.donce.common.ui.BaseFragment;
 import com.donce.common.util.ToastUtil;
-import com.donce.common.widget.Dialog.CustomFragmentDialog;
 
 import java.io.File;
 import java.util.List;
@@ -26,7 +24,7 @@ import butterknife.OnClick;
 /**
  * Created by Administrator on 2016/8/2 0002.
  */
-public class SecondFragment extends BaseFragment implements UpdateDownloadView {
+public class SecondFragment extends BaseFragment implements DownloadView {
     @BindView(R.id.tv_title)
     TextView tvTitle;
     @BindView(R.id.btn1)
@@ -63,10 +61,8 @@ public class SecondFragment extends BaseFragment implements UpdateDownloadView {
                 } else {
                     isDownload = true;
                     btn1.setText("取消");
-                    String tag = "basic";
-                    String destFileDir = Environment.getExternalStorageDirectory().getPath() + "/" + tag + "/";
-                    String destFileName = System.currentTimeMillis() + "test123.exe";
-                    fileDownloadPresenter = new FileDownloadPresenter(this, destFileDir, destFileName);
+
+                    fileDownloadPresenter = new FileDownloadPresenter(this);
                     fileDownloadPresenter.download("url");
                 }
                 break;
@@ -107,7 +103,7 @@ public class SecondFragment extends BaseFragment implements UpdateDownloadView {
     @Override
     public void inProgress(float progress, long total) {
         int progressCount = (int) (100 * progress);
-        Log.d("inProgress", progressCount + "%");
+        Log.d("inProgress", progressCount + "%" + ",total:" + total);
     }
 
     @Override
@@ -119,8 +115,9 @@ public class SecondFragment extends BaseFragment implements UpdateDownloadView {
     }
 
     @Override
-    public void onFail(String message) {
+    public void onFailure(String message) {
         isDownload = false;
+        btn1.setText("文件下载");
         ToastUtil.showLongToast(getActivity(), "失败");
     }
 

@@ -1,44 +1,52 @@
 package com.djonce.sample.presenter;
 
-import android.util.Log;
-
+import com.djonce.sample.model.api.CodeConstant;
 import com.djonce.sample.model.api.Factory;
 import com.djonce.sample.model.bean.BaseResponse;
 import com.djonce.sample.model.bean.User;
+import com.donce.common.callback.ApiCallback;
 import com.donce.common.presenter.LoadView;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * 登录的数据请求
  * Created by Administrator on 2016/7/22 0022.
  */
-public class LoginPresent extends BasePresenter {
+public class LoginPresent {
+    private LoadView loadView;
 
     public LoginPresent(LoadView view) {
-        super(view);
+        this.loadView = view;
     }
 
 
     //登录
     public void login(String name, String password) {
 //        String passwordMd5 = HexUtil.encodeHexStr(MD5Util.md5(password));
-        Factory.provideHttpService().getUser(name, password).enqueue(new Callback<BaseResponse<User>>() {
+        Factory.provideHttpService().getUser(name, password).enqueue(new ApiCallback<BaseResponse<User>>() {
+
             @Override
-            public void onResponse(Call<BaseResponse<User>> call, Response<BaseResponse<User>> response) {
-                handleResponse(response);
+            public void onComplete() {
+                loadView.onLoadComplete();
+            }
+
+
+            @Override
+            public void onFailure(String msg) {
+                loadView.onFailure(msg);
             }
 
             @Override
-            public void onFailure(Call<BaseResponse<User>> call, Throwable t) {
-                if (t == null) {
-                    onLoadFailure("连接失败");
+            public void onSuccess(BaseResponse<User> response) {
+                if (response == null) {
+                    loadView.onFailure("json解析异常");
                     return;
                 }
-                Log.d("main", t.getMessage());
-                onLoadFailure(t.getMessage());
+
+                if (response.getCode() == CodeConstant.SUCCESS) {
+                    loadView.onLoadSuccess(response.getObject());
+                } else {
+                    loadView.onFailure(response.getErrorMsg());
+                }
             }
         });
 
@@ -50,7 +58,7 @@ public class LoginPresent extends BasePresenter {
                 .subscribe(new Subscriber<BaseResponse<User>>() {
                     @Override
                     public void onCompleted() {
-                        onLoadComplete();
+                        onComplete();
                     }
 
                     @Override
@@ -65,7 +73,11 @@ public class LoginPresent extends BasePresenter {
 
                     @Override
                     public void onNext(BaseResponse<User> user) {
-                        parseResponse(user);
+                        if (user.getCode() == CodeConstant.SUCCESS) {
+                            loadView.onSuccess(user.getObject());
+                        } else {
+                            loadView.onFailure(user.getErrorMsg());
+                        }
                     }
                 });*/
     }

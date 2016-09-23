@@ -1,8 +1,8 @@
-package com.donce.common.presenter;
+package com.donce.common.callback;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,15 +10,15 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * 文件下载的Presenter基类
- * Created by Administrator on 2016/8/11 0011.
+ * 文件下载的回调
+ * Created by Administrator on 2016/9/22 0022.
  */
-public class FileDownBasePresenter {
-
-    private UpdateDownloadView updateDownloadView;
+public abstract class FileCallback extends BaseCallback<File> implements Callback<ResponseBody> {
 
     /**
      * 目标文件存储的文件夹路径
@@ -29,33 +29,34 @@ public class FileDownBasePresenter {
      */
     private String destFileName;
 
-    public FileDownBasePresenter(UpdateDownloadView view, String destFileDir, String destFileName) {
-        this.updateDownloadView = view;
+
+    public FileCallback(String destFileDir, String destFileName) {
         this.destFileDir = destFileDir;
         this.destFileName = destFileName;
+
     }
 
-
-    //处理响应成功与失败后的数据
-    public void handleResponse(Response<ResponseBody> response) {
-        ResponseBody body = response.body();
-        if (body == null) {
-            onLoadFailure("文件异常");
+    @Override
+    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+        onComplete();
+        if (response == null || response.body() == null) {
+            onFailure("文件异常");
             return;
         }
         try {
             File file = saveFile(response.body());
-            updateDownloadView.onSuccess(file);
+            onSuccess(file);
         } catch (IOException e) {
             e.printStackTrace();
-            String message;
-            if (e == null || TextUtils.isEmpty(e.getMessage())) {
-                message = "";
-            } else {
-                message = e.getMessage();
-            }
-            onLoadFailure(message);
+            Log.d("fileCallback", e.getMessage());
+            onFailure("文件下载失败");
         }
+    }
+
+    @Override
+    public void onFailure(Call<ResponseBody> call, Throwable t) {
+        Log.d("fileCallback", t.getMessage());
+        onFailure("文件下载失败");
     }
 
     //保存文件
@@ -82,7 +83,8 @@ public class FileDownBasePresenter {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        updateDownloadView.inProgress(finalSum * 1.0f / total, total);
+                        //当大小未知时 total为-1
+                        inProgress(finalSum * 1.0f / total, total);
                     }
                 });
 
@@ -104,7 +106,4 @@ public class FileDownBasePresenter {
         }
     }
 
-    public void onLoadFailure(String msg) {
-        updateDownloadView.onFail(msg);
-    }
 }

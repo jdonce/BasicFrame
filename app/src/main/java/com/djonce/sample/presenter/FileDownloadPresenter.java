@@ -1,49 +1,56 @@
 package com.djonce.sample.presenter;
 
 
-import android.text.TextUtils;
+import android.os.Environment;
 
 import com.djonce.sample.model.api.Factory;
-import com.donce.common.presenter.FileDownBasePresenter;
-import com.donce.common.presenter.UpdateDownloadView;
+import com.donce.common.callback.FileCallback;
+import com.donce.common.presenter.DownloadView;
+
+import java.io.File;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * 文件下载
  * Created by Administrator on 2016/8/10 0010.
  */
-public class FileDownloadPresenter extends FileDownBasePresenter {
+public class FileDownloadPresenter {
 
     private Call<ResponseBody> call;
+    private DownloadView loadView;
 
-    public FileDownloadPresenter(UpdateDownloadView view, String destFileDir, String destFileName) {
-        super(view, destFileDir, destFileName);
+    public FileDownloadPresenter(DownloadView view) {
+        this.loadView = view;
     }
 
     //下载文件
     public void download(String url) {
         url = "http://down.360safe.com/360/inst.exe";
+        String tag = "basic";
+        String destFileDir = Environment.getExternalStorageDirectory().getPath() + "/" + tag + "/";
+        String destFileName = System.currentTimeMillis() + "test123.exe";
         call = Factory.provideHttpService().download(url);
-        call.enqueue(new Callback<ResponseBody>() {
+        call.enqueue(new FileCallback(destFileDir, destFileName) {
+
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                handleResponse(response);
+            public void inProgress(float progress, long total) {
+                loadView.inProgress(progress, total);
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                String message;
-                if (t == null || TextUtils.isEmpty(t.getMessage())) {
-                    message = "";
-                } else {
-                    message = t.getMessage();
-                }
-                onLoadFailure(message);
+            public void onFailure(String msg) {
+                loadView.onFailure(msg);
+            }
 
+            @Override
+            public void onSuccess(File response) {
+                if (response == null) {
+                    loadView.onFailure("文件下载失败");
+                    return;
+                }
+                loadView.onSuccess(response);
             }
         });
     }
