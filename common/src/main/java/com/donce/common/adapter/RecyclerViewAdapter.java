@@ -46,13 +46,13 @@ public abstract class RecyclerViewAdapter<T> extends RecyclerView.Adapter<Recycl
     @Override
     public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerViewHolder recyclerViewHolder = RecyclerViewHolder.getViewHolder(context, parent, layoutId);
-        int position = getPosition(recyclerViewHolder);
-        setListener(parent, recyclerViewHolder, position);
+
         return recyclerViewHolder;
     }
 
     @Override
     public void onBindViewHolder(RecyclerViewHolder holder, int position) {
+        setListener(holder, position);
         convert(holder, getDatas().get(position));
 
     }
@@ -62,13 +62,13 @@ public abstract class RecyclerViewAdapter<T> extends RecyclerView.Adapter<Recycl
     }
 
     //设置选项点击和长按事件
-    private void setListener(final ViewGroup parent, RecyclerViewHolder holder, final int position) {
+    private void setListener(RecyclerViewHolder holder, final int position) {
         //选项点击事件
         holder.getConvertView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (onItemClickListener != null) {
-                    onItemClickListener.onItemClick(parent, v, datas.get(position), position);
+                    onItemClickListener.onItemClick(v, datas.get(position), position);
                 }
             }
         });
@@ -78,7 +78,7 @@ public abstract class RecyclerViewAdapter<T> extends RecyclerView.Adapter<Recycl
             @Override
             public boolean onLongClick(View v) {
                 if (onItemLongClickListener != null) {
-                    onItemLongClickListener.onItemLongClick(parent, v, datas.get(position), position);
+                    onItemLongClickListener.onItemLongClick(v, datas.get(position), position);
                 }
                 return false;
             }
@@ -97,11 +97,11 @@ public abstract class RecyclerViewAdapter<T> extends RecyclerView.Adapter<Recycl
     public abstract void convert(RecyclerViewHolder holder, T t);
 
     public interface OnItemClickListener<T> {
-        void onItemClick(ViewGroup parent, View view, T t, int position);
+        void onItemClick(View view, T t, int position);
 
     }
 
     public interface OnItemLongClickListener<T> {
-        boolean onItemLongClick(ViewGroup parent, View view, T t, int position);
+        boolean onItemLongClick(View view, T t, int position);
     }
 }

@@ -2,11 +2,13 @@ package com.djonce.sample.ui.fragment;
 
 
 import android.util.Log;
+import android.view.View;
 
 import com.djonce.sample.R;
 import com.djonce.sample.ui.adapter.HomeAdapter;
-import com.donce.common.util.XRecyclerViewHelper;
+import com.donce.common.adapter.RecyclerViewAdapter;
 import com.donce.common.ui.BaseFragment;
+import com.donce.common.util.XRecyclerViewHelper;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 
 import java.util.ArrayList;
@@ -42,6 +44,13 @@ public class MainFragment extends BaseFragment implements XRecyclerView.LoadingL
         adapter.setDatas(list);
         recyclerView.setAdapter(adapter);
         recyclerView.setLoadingListener(this);
+
+        adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick( View view, Object o, int position) {
+                Log.d("onitem", position + "");
+            }
+        });
     }
 
     private void initData() {
