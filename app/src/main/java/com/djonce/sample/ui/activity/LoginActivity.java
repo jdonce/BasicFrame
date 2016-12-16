@@ -9,7 +9,6 @@ import com.djonce.sample.model.bean.User;
 import com.djonce.sample.presenter.LoginPresent;
 import com.donce.common.presenter.LoadView;
 import com.donce.common.ui.BaseActivity;
-import com.donce.common.util.ToastUtil;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -57,5 +56,7 @@ public class LoginActivity extends BaseActivity implements LoadView<User> {
     @Override
     public void onFailure(String msg) {
         Log.d("onFailure", msg);
+        dismissLoadProgress();
+        goToNextActivity(MainActivity.class);
     }
 }

@@ -1,5 +1,6 @@
 package com.djonce.sample.ui.fragment;
 
+import android.Manifest;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +15,8 @@ import com.djonce.sample.presenter.FileDownloadPresenter;
 import com.donce.common.presenter.DownloadView;
 import com.donce.common.ui.BaseFragment;
 import com.donce.common.util.ToastUtil;
+import com.donce.common.util.permission.PermissionInterface;
+import com.donce.common.util.permission.PermissionUtil;
 
 import java.io.File;
 import java.util.List;
@@ -24,7 +27,7 @@ import butterknife.OnClick;
 /**
  * Created by Administrator on 2016/8/2 0002.
  */
-public class SecondFragment extends BaseFragment implements DownloadView {
+public class SecondFragment extends BaseFragment implements DownloadView, PermissionInterface {
     @BindView(R.id.tv_title)
     TextView tvTitle;
     @BindView(R.id.btn1)
@@ -38,6 +41,7 @@ public class SecondFragment extends BaseFragment implements DownloadView {
 
     private FileDownloadPresenter fileDownloadPresenter;
     private boolean isDownload;
+
 
     @Override
     protected int getLayoutResource() {
@@ -55,16 +59,8 @@ public class SecondFragment extends BaseFragment implements DownloadView {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn1:
-                if (isDownload) {
-                    isDownload = false;
-                    fileDownloadPresenter.onCancelDownload();
-                } else {
-                    isDownload = true;
-                    btn1.setText("取消");
-
-                    fileDownloadPresenter = new FileDownloadPresenter(this);
-                    fileDownloadPresenter.download("url");
-                }
+                permissionManager = PermissionUtil.writeExternalStorageCheckPermission(SecondFragment.this,
+                        PermissionUtil.COMMON_WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST, this);
                 break;
             case R.id.btn2:
                 String name = editName.getText().toString();
@@ -78,6 +74,19 @@ public class SecondFragment extends BaseFragment implements DownloadView {
                 break;
         }
 
+    }
+
+    private void download() {
+        if (isDownload) {
+            isDownload = false;
+            fileDownloadPresenter.onCancelDownload();
+        } else {
+            isDownload = true;
+            btn1.setText("取消");
+
+            fileDownloadPresenter = new FileDownloadPresenter(this);
+            fileDownloadPresenter.download("url");
+        }
     }
 
     //数据插入
@@ -121,4 +130,30 @@ public class SecondFragment extends BaseFragment implements DownloadView {
         ToastUtil.showLongToast(getActivity(), "失败");
     }
 
+
+    @Override
+    public void onPermissionGranted(String... permissions) {
+        for (String permission : permissions) {
+            switch (permission) {
+                case Manifest.permission.WRITE_EXTERNAL_STORAGE:
+                    download();
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onPermissionDenied(String... permission) {
+        ToastUtil.showLongToast(getContext(), "权限请求被拒绝");
+    }
+
+    @Override
+    public void onPermissionFailure() {
+        ToastUtil.showLongToast(getContext(), "权限请求失败");
+    }
+
+    @Override
+    public void onRecheckPermission() {
+        ToastUtil.showLongToast(getContext(), "根据提示去设置权限请求");
+    }
 }

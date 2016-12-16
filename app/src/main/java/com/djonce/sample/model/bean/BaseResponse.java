@@ -7,7 +7,7 @@ package com.djonce.sample.model.bean;
 public class BaseResponse<T> {
     private int code;
     private String errorMsg;
-    private T object;
+    private T data;
     private boolean success;
 
     public int getCode() {
@@ -27,11 +27,11 @@ public class BaseResponse<T> {
     }
 
     public T getObject() {
-        return object;
+        return data;
     }
 
     public void setObject(T object) {
-        this.object = object;
+        this.data = object;
     }
 
     public boolean isSuccess() {

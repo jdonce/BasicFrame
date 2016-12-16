@@ -2,6 +2,7 @@ package com.donce.common.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.donce.common.util.permission.PermissionManager;
 import com.donce.common.widget.LoadingDialog;
 
 import butterknife.ButterKnife;
@@ -23,7 +25,7 @@ public abstract class BaseFragment extends Fragment {
     protected View rootView;
     private Unbinder unbinder;
     private LoadingDialog dialog;
-
+    protected PermissionManager permissionManager;
 
     @Nullable
     @Override
@@ -64,4 +66,14 @@ public abstract class BaseFragment extends Fragment {
         super.onDestroyView();
         unbinder.unbind();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (permissionManager != null) {
+            permissionManager.onRequestPermissionsResult(getActivity(), requestCode, permissions, grantResults);
+        }
+    }
+
+
 }

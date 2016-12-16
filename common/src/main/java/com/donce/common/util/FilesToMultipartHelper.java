@@ -50,9 +50,10 @@ public class FilesToMultipartHelper {
     }
 
 
-    public static RequestBody createPartFromString(String descriptionString) {
+    public static RequestBody filesToRequestBody(String filePath) {
+        File file = new File(filePath);
         return RequestBody.create(
-                MediaType.parse(MULTIPART_FORM_DATA), descriptionString);
+                MediaType.parse(MULTIPART_FORM_DATA), file);
     }
 
     public static MultipartBody.Part prepareFilePart(String partName, String filePath) {
